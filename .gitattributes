@@ -1,0 +1,10 @@
+# Consistent source-file line endings across operating systems.
+* text=auto
+*.tex text eol=lf
+*.cls text eol=lf
+*.md text eol=lf
+LICENSE text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.pdf binary
+*.png binary

@@ -1,0 +1,211 @@
+% Reusable CV example. All people, organisations and achievements are fictional.
+% Keep this file next to cv.cls. Replace the sample text and placeholder URLs.
+% Build: latexmk -pdf cv-example.tex
+% Use [letterpaper] for US Letter; A4 is the default.
+\documentclass{cv}
+
+% APPEARANCE
+% All settings are optional. Sizes accept dimensions such as 10pt.
+% Font choices: computer-modern, latin-modern, times, palatino, helvetica.
+% body-size also controls heading, subentry, date, location, contact, bio and footer sizes
+% unless those sizes are explicitly set below. Line spacing is 1.2 x size.
+\cvsetup{
+    font          = computer-modern,
+    body-size     = 10pt,
+    name-size     = 17.28pt,
+    section-size  = 12pt,
+    link-color    = blue,
+    location-color = black!55
+}
+% Further optional settings (shown with their defaults):
+% \cvsetup{
+%     heading-size       = 10pt,
+%     subentry-size      = 10pt,
+%     date-size          = 10pt,
+%     location-size      = 10pt,
+%     contact-size       = 10pt,
+%     bio-size           = 10pt,
+%     footer-size        = 10pt,
+%     location-icon-size = 7pt,
+%     contact-icon-color = black!40,
+%     organisation-first = true,
+%     show-dates         = true,
+%     show-location-icons = true,
+%     show-contact-icons = true,
+%     show-page-numbers  = true,
+%     margin             = 2cm,
+%     heading-gap        = 4pt,
+%     bullet-gap         = 2pt,
+%     entry-gap          = 7pt,
+%     section-gap        = 10pt,
+%     header-gap         = 6pt,
+%     bio-gap            = 10pt,
+%     date-gap           = 8pt,
+%     location-gap       = 10pt,
+%     subentry-indent    = 10pt,
+%     row-inset          = 6pt,
+%     date-width         = auto
+% }
+% date-width=auto measures a date range in the selected date font.
+% For longer date labels, supply a width such as date-width=3cm.
+% show-dates=false removes the entire date column and reclaims its width.
+% One entry without dates still aligns with the other entries.
+% Colours accept any xcolor expression, e.g. blue!70!black.
+% The centred footer reads "page 1 of 1" (also shown on one-page CVs).
+% latexmk resolves the total automatically; with pdflatex, compile twice.
+
+% HEADER
+% Every field is optional, including name. Omit fields or set them to {}.
+% If no fields are provided, \makecvheader produces no space or separators.
+\cvheader{
+    name           = {Alex Example},
+    title          = {Research Engineer},
+    email          = {alex@example.com},
+    website        = {https://example.com},
+    github         = {https://github.com/your-name},
+    linkedin       = {https://www.linkedin.com/in/your-name/},
+    google-scholar = {https://scholar.google.com/citations?user=YOUR_ID},
+    % phone        = {+41 00 000 00 00},
+    % location     = {Zürich, Switzerland},
+    bio            = {Research engineer working on information retrieval and machine learning.
+                      Develops evaluation methods and turns research prototypes into reliable software.}
+}
+% Delete any unwanted field above; uncomment phone or location if useful.
+% Keep the contact row short for the cleanest layout.
+% Display labels can differ from their destinations; defaults are shown below.
+% \cvheader{
+%     email-label    = {Email},
+%     website-label  = {Website},
+%     github-label   = {GitHub},
+%     linkedin-label = {LinkedIn},
+%     google-scholar-label = {Google Scholar}
+% }
+% For example, website-label={Portfolio} changes only the visible link text.
+% The optional bio is left-aligned below the contacts and has no section title.
+
+\begin{document}
+\makecvheader
+
+% ENTRIES
+% All five entry fields are optional and reset for every entry.
+% Missing organisation or role: no middle dot.
+% Missing location: no pin; the title uses the full available width.
+% Missing URL: plain heading text. URL links the organisation, or the role
+% if organisation is absent. Organisation names are automatically bold.
+% Braces protect commas in field values; use \& for an ampersand.
+% Entries stay together on a page; keep each entry shorter than one page.
+\cvsection{Professional Experience}
+
+% Complete entry: linked organisation, role, dates, location, detail and bullets.
+\begin{cventry}[
+    organisation = {Example Research},
+    role         = {Research Engineer},
+    dates        = {09/2024--present},
+    location     = {Zürich, Switzerland},
+    url          = {https://example.com}
+]
+    \cvdetail{Project: \cvlink{https://example.com/search}{\textit{Evaluating Search over Company Knowledge}}}
+    \begin{cvbullets}
+        \item Built evaluation frameworks for retrieval and document parsing; deployed the resulting features in production.
+        \item Developed a benchmark spanning documentation, support conversations and source code.
+    \end{cvbullets}
+\end{cventry}
+
+% Omit url for an unlinked heading; omit location to give the title more space.
+\begin{cventry}[
+    organisation = {Example University},
+    role         = {Teaching Assistant},
+    dates        = {09/2022--06/2024}
+]
+    \begin{cvbullets}
+        \item Prepared and taught weekly mathematics exercise classes for 30 undergraduate students.
+    \end{cvbullets}
+\end{cventry}
+
+\cvsection{Education}
+
+\begin{cventry}[
+    organisation = {Example University},
+    role         = {MSc Computer Science},
+    dates        = {09/2022--06/2024},
+    location     = {Zürich, Switzerland},
+    url          = {https://example.com/university}
+]
+    \cvdetail{GPA: 5.7/6.0; credits: 120/120 ECTS; focus: Machine Learning}
+    \cvdetail{Thesis: \cvlink{https://example.com/thesis}{\textit{Learning to Retrieve Evidence from Technical Documents}}}
+    \cvdetail{Supervisor: Prof. Jordan Example (Information Retrieval Group)}
+    % Subentries take the same five fields, but have no body.
+    % Titles indent under the degree; their dates stay in the main date column.
+    \cvsubentry[
+        organisation = {Partner University},
+        role         = {Exchange Semester},
+        dates        = {01/2023--06/2023},
+        location     = {Copenhagen, Denmark}
+    ]
+    \cvsubentry[
+        organisation = {Example Institute},
+        role         = {Summer School},
+        dates        = {08/2023},
+        location     = {London, UK}
+    ]
+\end{cventry}
+
+% A heading-only entry needs no body commands.
+\begin{cventry}[
+    organisation = {Example University},
+    role         = {BSc Mathematics},
+    dates        = {09/2019--06/2022}
+]
+\end{cventry}
+
+% Section names are unrestricted: add, remove or rename them to suit your CV.
+\cvsection{Selected Projects \& Publications}
+
+% Organisation-only entry: bold project name, with no stray middle dot.
+\begin{cventry}[
+    organisation = {Open Search Toolkit},
+    dates        = {2024--present},
+    url          = {https://example.com/toolkit}
+]
+    \begin{cvbullets}
+        \item Created an open-source toolkit for comparing retrieval methods on reproducible datasets.
+    \end{cvbullets}
+\end{cventry}
+
+% A role-only entry is useful for a publication title. Its URL links that title.
+\begin{cventry}[
+    role  = {Evaluating Retrieval on Heterogeneous Collections},
+    dates = {2024},
+    url   = {https://example.com/paper}
+]
+    \cvdetail{\textbf{Alex Example}, Jordan Example; Example Research Workshop.}
+    \cvdetail{\cvlink{https://example.com/paper}{Paper}; \cvlink{https://example.com/code}{Code}; \cvlink{https://example.com/data}{Dataset}}
+\end{cventry}
+
+\cvsection{Additional Experience}
+
+% No dates: the entry still aligns with the content column above.
+\begin{cventry}[role={Volunteer Programming Mentor}]
+    \cvdetail{Led introductory Python workshops for local secondary-school students.}
+\end{cventry}
+
+% No heading fields: use a body-only entry for skills, languages or interests.
+% Remove this entire section if these details are better shown in your entries.
+\cvsection{Skills \& Languages}
+\begin{cventry}
+    \cvdetail{\textbf{Technical:} Python, SQL, PyTorch, Git, Linux}
+    \cvdetail{\textbf{Languages:} English (fluent); German (native); French (conversational)}
+\end{cventry}
+
+% LAYOUT RECIPES (set these in \cvsetup in the preamble, not here)
+% Role before organisation: organisation-first=false (organisation stays bold).
+% No date column: show-dates=false. No icons: show-contact-icons=false,
+% show-location-icons=false. No footer: show-page-numbers=false.
+% Compact style: body-size=9pt, heading-gap=3pt, bullet-gap=1pt, entry-gap=5pt.
+% Sans-serif style: font=helvetica. Muted links: link-color=blue!50!black.
+%
+% Longer CVs flow onto additional pages automatically, with page X of Y footers.
+% Each cventry (including its subentries) stays together; it must fit on one page.
+% To choose a page break yourself, place \newpage between complete entries.
+
+\end{document}

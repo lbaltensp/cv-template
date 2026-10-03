@@ -1,0 +1,47 @@
+# LaTeX build files. Keep cv-example.pdf as the downloadable example.
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.xdv
+*.dvi
+*.nav
+*.snm
+*.vrb
+*.loa
+*.lol
+*.idx
+*.ind
+*.ilg
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.bak
+*.tmp
+*~
+
+# Common output folders and local editor settings.
+/build/
+/out/
+/.vscode/
+/.idea/
+
+# Operating-system metadata.
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
