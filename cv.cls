@@ -11,7 +11,7 @@
 
 % Public API:
 %   Setup:   \cvsetup, \cvheader, \makecvheader
-%   Content: \cvsection, cventry, \cvdetail, cvbullets, \cvsubentry, \cvlink
+%   Content: \cvsection, cventry, \cvdetail, cvbullets, \cvsubentry, \cvlink, \cvseparator
 % Internal commands use the cv@ prefix. See cv-example.tex for usage examples.
 
 % ============================================================================
@@ -53,9 +53,11 @@
 \newcommand{\cv@contactSize}{\cv@bodySize}
 \newcommand{\cv@bioSize}{\cv@bodySize}
 \newcommand{\cv@footerSize}{\cv@bodySize}
+\newcommand{\cv@documentTitle}{\cv@name\space--\space CV}
 \newcommand{\cv@nameSize}{17.28pt}
 \newcommand{\cv@sectionSize}{12pt}
 \newcommand{\cv@locationIconSize}{7pt}
+\newcommand{\cv@bulletSize}{5.5pt}
 
 \colorlet{cvLink}{blue}
 \colorlet{cvLocation}{black!55}
@@ -63,6 +65,8 @@
 
 % Vertical gaps are additional space beyond normal line spacing.
 \newlength{\cv@headingGap}      \setlength{\cv@headingGap}{4pt}
+\newlength{\cv@bulletIndent}
+\newlength{\cv@bulletLabelGap}
 \newlength{\cv@bulletGap}       \setlength{\cv@bulletGap}{2pt}
 \newlength{\cv@entryGap}        \setlength{\cv@entryGap}{7pt}
 \newlength{\cv@sectionGap}      \setlength{\cv@sectionGap}{10pt}
@@ -74,6 +78,12 @@
 \newlength{\cv@rowInset}        \setlength{\cv@rowInset}{6pt}
 \newcommand{\cv@dateWidthSetting}{auto}
 
+\newbool{cv@customSectionGap} \setbool{cv@customSectionGap}{false}
+\newbool{cv@customHeadingGap} \setbool{cv@customHeadingGap}{false}
+\newbool{cv@customEntryGap} \setbool{cv@customEntryGap}{false}
+\newbool{cv@customBulletGap} \setbool{cv@customBulletGap}{false}
+
+\newbool{cv@compactLayout}      \setbool{cv@compactLayout}{false}
 \newbool{cv@organisationFirst}  \setbool{cv@organisationFirst}{true}
 \newbool{cv@showDates}          \setbool{cv@showDates}{true}
 \newbool{cv@showLocationIcons}  \setbool{cv@showLocationIcons}{true}
@@ -95,7 +105,8 @@
     }%
 }
 
-% Typography and colours.
+% PDF metadata, typography and colours.
+\define@key{cv}{document-title}{\def\cv@documentTitle{#1}}
 \define@key{cv}{font}{\cv@selectFont{#1}}
 \define@key{cv}{body-size}{\def\cv@bodySize{#1}}
 \define@key{cv}{heading-size}{\def\cv@headingSize{#1}}
@@ -108,15 +119,16 @@
 \define@key{cv}{name-size}{\def\cv@nameSize{#1}}
 \define@key{cv}{section-size}{\def\cv@sectionSize{#1}}
 \define@key{cv}{location-icon-size}{\def\cv@locationIconSize{#1}}
+\define@key{cv}{bullet-size}{\def\cv@bulletSize{#1}}
 \define@key{cv}{link-color}{\colorlet{cvLink}{#1}}
 \define@key{cv}{location-color}{\colorlet{cvLocation}{#1}}
 \define@key{cv}{contact-icon-color}{\colorlet{cvContactIcon}{#1}}
 
 % Spacing and page layout.
-\define@key{cv}{heading-gap}{\setlength{\cv@headingGap}{#1}}
-\define@key{cv}{bullet-gap}{\setlength{\cv@bulletGap}{#1}}
-\define@key{cv}{entry-gap}{\setlength{\cv@entryGap}{#1}}
-\define@key{cv}{section-gap}{\setlength{\cv@sectionGap}{#1}}
+\define@key{cv}{heading-gap}{\setlength{\cv@headingGap}{#1}\setbool{cv@customHeadingGap}{true}}
+\define@key{cv}{bullet-gap}{\setlength{\cv@bulletGap}{#1}\setbool{cv@customBulletGap}{true}}
+\define@key{cv}{entry-gap}{\setlength{\cv@entryGap}{#1}\setbool{cv@customEntryGap}{true}}
+\define@key{cv}{section-gap}{\setlength{\cv@sectionGap}{#1}\setbool{cv@customSectionGap}{true}}
 \define@key{cv}{header-gap}{\setlength{\cv@headerGap}{#1}}
 \define@key{cv}{bio-gap}{\setlength{\cv@bioGap}{#1}}
 \define@key{cv}{date-gap}{\setlength{\cv@dateGap}{#1}}
@@ -125,6 +137,34 @@
 \define@key{cv}{row-inset}{\setlength{\cv@rowInset}{#1}}
 \define@key{cv}{date-width}{\def\cv@dateWidthSetting{#1}}
 \define@key{cv}{margin}{\geometry{margin=#1}}
+
+% Entry layout. Timeline remains the default for existing documents.
+\newcommand{\cv@setLayout}[1]{%
+    \ifstrequal{#1}{timeline}{%
+        \setbool{cv@compactLayout}{false}%
+    }{%
+        \ifstrequal{#1}{compact}{%
+            \setbool{cv@compactLayout}{true}%
+        }{%
+            \ClassError{cv}{Unknown layout '#1'}{Choose timeline or compact.}%
+        }%
+    }%
+}
+\define@key{cv}{layout}{\cv@setLayout{#1}}
+
+% Resolve layout defaults once the final preamble settings are known.
+% Explicit gap settings take precedence, regardless of key/call ordering.
+\newcommand{\cv@layoutGap}[4]{%
+    \ifbool{cv@custom#1Gap}{}{%
+        \ifbool{cv@compactLayout}{\setlength{#2}{#4}}{\setlength{#2}{#3}}%
+    }%
+}
+\newcommand{\cv@applyLayoutSpacing}{%
+    \cv@layoutGap{Section}\cv@sectionGap{10pt}{4pt}%
+    \cv@layoutGap{Heading}\cv@headingGap{4pt}{1pt}%
+    \cv@layoutGap{Entry}\cv@entryGap{7pt}{4pt}%
+    \cv@layoutGap{Bullet}\cv@bulletGap{2pt}{1pt}%
+}
 
 % Visibility and heading order.
 \define@key{cv}{organisation-first}[true]{\setbool{cv@organisationFirst}{#1}}
@@ -160,7 +200,7 @@
     \setkeys{cvEntry}{organisation={},role={},dates={},location={},url={},#1}%
 }
 
-% A URL alone is invisible. Dates count only when the date column is enabled.
+% A URL alone is invisible. Dates count only when date display is enabled.
 \newcommand{\cv@ifHeading}[2]{%
     \cv@ifEmpty\cv@organisation{%
         \cv@ifEmpty\cv@role{%
@@ -185,18 +225,20 @@
 \newif\ifcv@firstEntry
 \cv@firstEntrytrue
 
-% Full row = inset + optional date column/gap + content column.
+% Timeline reserves a date column; compact reclaims it for all body blocks.
 \newcommand{\cv@measureColumns}{%
     \setlength{\cv@contentOffset}{\cv@rowInset}%
-    \ifbool{cv@showDates}{%
-        \ifdefstring{\cv@dateWidthSetting}{auto}{%
-            \settowidth{\cv@dateWidth}{\cv@setTextSize{\cv@dateSize}00/0000--00/0000}%
-        }{%
-            \setlength{\cv@dateWidth}{\cv@dateWidthSetting}%
-        }%
-        \addtolength{\cv@contentOffset}{\cv@dateWidth}%
-        \addtolength{\cv@contentOffset}{\cv@dateGap}%
-    }{}%
+    \ifbool{cv@compactLayout}{}{%
+        \ifbool{cv@showDates}{%
+            \ifdefstring{\cv@dateWidthSetting}{auto}{%
+                \settowidth{\cv@dateWidth}{\cv@setTextSize{\cv@dateSize}00/0000--00/0000}%
+            }{%
+                \setlength{\cv@dateWidth}{\cv@dateWidthSetting}%
+            }%
+            \addtolength{\cv@contentOffset}{\cv@dateWidth}%
+            \addtolength{\cv@contentOffset}{\cv@dateGap}%
+        }{}%
+    }%
     \setlength{\cv@contentWidth}{\dimexpr\linewidth-\cv@contentOffset\relax}%
 }
 
@@ -211,13 +253,13 @@
 % Link the role only when there is no organisation to link instead.
 \newcommand{\cv@renderRole}{%
     \cv@ifEmpty\cv@role{}{%
-        \cv@ifEmpty\cv@organisation{\cv@linkedLabel{\cv@role}}{\cv@role}%
+        \textit{\cv@ifEmpty\cv@organisation{\cv@linkedLabel{\cv@role}}{\cv@role}}%
     }%
 }
 
 \newcommand{\cv@renderRoleSeparator}{%
     \cv@ifEmpty\cv@organisation{}{%
-        \cv@ifEmpty\cv@role{}{\nobreak\enspace\textperiodcentered\enspace}%
+        \cv@ifEmpty\cv@role{}{\nobreak\enspace\cvseparator\enspace}%
     }%
 }
 
@@ -257,7 +299,7 @@
 }
 
 % Arguments: content indentation, heading font size. Dates never indent.
-\newcommand{\cv@renderHeadingRow}[2]{%
+\newcommand{\cv@renderTimelineHeadingRow}[2]{%
     \noindent\hspace*{\cv@rowInset}%
     \ifbool{cv@showDates}{%
         \parbox[t]{\cv@dateWidth}{%
@@ -270,6 +312,79 @@
         \raggedright\cv@setTextSize{#2}\cv@renderHeading
     }%
     \par
+}
+
+% A compact heading has two rows: primary title/dates, then secondary/location.
+% Missing titles are promoted to the first row; entirely empty rows disappear.
+\newcommand{\cv@setCompactTitles}{%
+    \ifbool{cv@organisationFirst}{%
+        \let\cv@compactPrimary\cv@organisation
+        \let\cv@compactSecondary\cv@role
+        \let\cv@compactRenderPrimary\cv@renderOrganisation
+        \let\cv@compactRenderSecondary\cv@renderRole
+    }{%
+        \let\cv@compactPrimary\cv@role
+        \let\cv@compactSecondary\cv@organisation
+        \let\cv@compactRenderPrimary\cv@renderRole
+        \let\cv@compactRenderSecondary\cv@renderOrganisation
+    }%
+    \cv@ifEmpty\cv@compactPrimary{%
+        \let\cv@compactPrimary\cv@compactSecondary
+        \let\cv@compactRenderPrimary\cv@compactRenderSecondary
+        \let\cv@compactSecondary\@empty
+    }{}%
+    \let\cv@compactDates\@empty
+    \ifbool{cv@showDates}{\let\cv@compactDates\cv@dates}{}%
+}
+
+% Arguments: left content, right-hand field, formatted right content.
+% Measure metadata, cap its width, and let both sides wrap independently.
+\newcommand{\cv@renderCompactLine}[3]{%
+    \cv@ifEmpty#2{%
+        \strut#1\strut\par
+    }{%
+        \sbox{\cv@measureBox}{#3}%
+        \setlength{\cv@locationWidth}{\wd\cv@measureBox}%
+        \ifdim\cv@locationWidth>0.4\linewidth
+            \setlength{\cv@locationWidth}{0.4\linewidth}%
+        \fi
+        \noindent\parbox[t]{\dimexpr\linewidth-\cv@locationWidth-\cv@locationGap\relax}{%
+            \raggedright\strut#1\strut
+        }%
+        \hfill
+        \parbox[t]{\cv@locationWidth}{\raggedleft\strut#3\strut}%
+        \par
+    }%
+}
+
+\newcommand{\cv@renderCompactHeading}{%
+    \cv@setCompactTitles
+    \cv@ifEmpty\cv@compactPrimary{%
+        \cv@ifEmpty\cv@compactDates{}{%
+            \cv@renderCompactLine{}\cv@compactDates{\cv@setTextSize{\cv@dateSize}\cv@compactDates}%
+        }%
+    }{%
+        \cv@renderCompactLine{\cv@compactRenderPrimary}\cv@compactDates{\cv@setTextSize{\cv@dateSize}\cv@compactDates}%
+    }%
+    \cv@ifEmpty\cv@compactSecondary{%
+        \cv@ifEmpty\cv@location{}{%
+            \cv@renderCompactLine{}\cv@location{\cv@renderLocation}%
+        }%
+    }{%
+        \cv@renderCompactLine{\cv@compactRenderSecondary}\cv@location{\cv@renderLocation}%
+    }%
+}
+
+% Both layouts share content commands, sizes, spacing and subentry indentation.
+\newcommand{\cv@renderHeadingRow}[2]{%
+    \ifbool{cv@compactLayout}{%
+        \noindent\hspace*{\dimexpr\cv@rowInset+#1\relax}%
+        \parbox[t]{\dimexpr\cv@contentWidth-#1\relax}{%
+            \raggedright\cv@setTextSize{#2}\cv@renderCompactHeading
+        }\par
+    }{%
+        \cv@renderTimelineHeadingRow{#1}{#2}%
+    }%
 }
 
 % The first body block follows heading-gap; later blocks use bullet-gap.
@@ -332,8 +447,16 @@
         \noindent\hspace*{\cv@contentOffset}%
         \begin{minipage}[t]{\cv@contentWidth}
             \raggedright
+            \def\cv@bulletMarker{{\cv@setTextSize{\cv@bulletSize}\textbullet}}%
+            \ifbool{cv@compactLayout}{%
+                \setlength{\cv@bulletIndent}{2.4em}%
+                \setlength{\cv@bulletLabelGap}{0.55em}%
+            }{%
+                \setlength{\cv@bulletIndent}{0.667em}%
+                \setlength{\cv@bulletLabelGap}{0.333em}%
+            }%
             \begin{itemize}[
-                label={-}, leftmargin=0.667em, labelsep=0.333em,
+                label={\cv@bulletMarker}, leftmargin=\cv@bulletIndent, labelsep=\cv@bulletLabelGap,
                 topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=\cv@bulletGap
             ]
                 #1%
@@ -354,7 +477,10 @@
     \endgroup
 }
 
-\newcommand{\cvlink}[2]{\href{#1}{\textcolor{cvLink}{#2}}}
+% Slightly stronger separator dots, at the surrounding text size.
+\newcommand{\cvseparator}{\textbf{\textperiodcentered}}
+
+\newcommand{\cvlink}[2]{\href{#1}{\textcolor{cvLink}{\textit{#2}}}}
 
 % ============================================================================
 % 6. Header fields and contact list
@@ -402,7 +528,7 @@
 % Append separators only between contacts that actually exist.
 \newcommand{\cv@appendContact}[1]{%
     \cv@ifEmpty\cv@contacts{}{%
-        \appto\cv@contacts{\quad\textperiodcentered\quad}%
+        \appto\cv@contacts{\quad\cvseparator\quad}%
     }%
     \appto\cv@contacts{\mbox{#1}}%
 }
@@ -421,14 +547,14 @@
 \newcommand{\cv@buildContacts}{%
     \let\cv@contacts\@empty
     \cv@addLinkContact\cv@email{\faEnvelope}{mailto:\cv@email}{\cv@emailLabel}%
-    \cv@addLinkContact\cv@website{\faGlobe}{\cv@website}{\cv@websiteLabel}%
-    \cv@addLinkContact\cv@github{\faGithub}{\cv@github}{\cv@githubLabel}%
-    \cv@addLinkContact\cv@linkedin{\faLinkedin}{\cv@linkedin}{\cv@linkedinLabel}%
-    \cv@addLinkContact\cv@googleScholar{\faGraduationCap}{\cv@googleScholar}{\cv@googleScholarLabel}%
     % Keep the displayed phone number; remove spaces only from its tel: URL.
     \edef\cv@phoneURI{\cv@phone\space}%
     \edef\cv@phoneURI{\expandafter\zap@space\cv@phoneURI\@empty}%
     \cv@addLinkContact\cv@phone{\faPhone}{tel:\cv@phoneURI}{\cv@phone}%
+    \cv@addLinkContact\cv@website{\faGlobe}{\cv@website}{\cv@websiteLabel}%
+    \cv@addLinkContact\cv@github{\faGithub}{\cv@github}{\cv@githubLabel}%
+    \cv@addLinkContact\cv@linkedin{\faLinkedin}{\cv@linkedin}{\cv@linkedinLabel}%
+    \cv@addLinkContact\cv@googleScholar{\faGraduationCap}{\cv@googleScholar}{\cv@googleScholarLabel}%
     \cv@ifEmpty\cv@headerLocation{}{%
         \cv@appendContact{\cv@contactIcon{\faMapMarker*}\cv@headerLocation}%
     }%
@@ -498,10 +624,11 @@
 }
 
 \AtBeginDocument{%
+    \cv@applyLayoutSpacing
     \renewcommand{\familydefault}{\cv@fontFamily}%
     \renewcommand{\rmdefault}{\cv@fontFamily}%
     \renewcommand{\normalsize}{\cv@setTextSize{\cv@bodySize}}%
     \normalfont\normalsize
     \ifbool{cv@showPageNumbers}{\pagestyle{cv}}{\pagestyle{empty}}%
-    \hypersetup{pdfauthor={\cv@name},pdftitle={\cv@name\space--\space CV}}%
+    \hypersetup{pdfauthor={\cv@name},pdftitle={\cv@documentTitle}}%
 }

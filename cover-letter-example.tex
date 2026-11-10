@@ -1,0 +1,49 @@
+% Standalone cover letter. Build with latexmk; keep cv.cls beside this file.
+\documentclass{cv}
+
+\cvsetup{
+    font              = computer-modern,
+    body-size         = 11pt,
+    contact-size      = 9pt,
+    name-size         = 17.28pt,
+    show-page-numbers = false,
+    link-color        = blue,
+    document-title    = {Your Name -- Cover Letter}
+}
+
+% Remove contact fields you do not need.
+\cvheader{
+    name     = {Your Name},
+    email    = {you@example.com},
+    website  = {https://example.com},
+    github   = {https://github.com/yourname},
+    linkedin = {https://www.linkedin.com/in/yourname/}
+}
+
+\begin{document}
+\makecvheader
+
+% Letter spacing is local to this document; CV spacing stays unchanged.
+\raggedright
+\setlength{\parskip}{0.75\baselineskip}
+
+% Optional date and recipient. Delete either block if unnecessary.
+\hfill\today\par
+
+Hiring Team\\
+Company Name
+
+\textbf{Application -- Role Title}
+
+Dear Hiring Team,
+
+[Introduce your interest in the role and the experience you would bring.]
+
+[Develop one or two relevant examples, explaining your contribution and what you learned.]
+
+[Explain why this role and organisation fit the work you want to pursue.]
+
+Kind regards,\\
+Your Name
+
+\end{document}

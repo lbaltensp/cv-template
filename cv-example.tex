@@ -1,7 +1,7 @@
 % Reusable CV example. All people, organisations and achievements are fictional.
 % Keep this file next to cv.cls. Replace the sample text and placeholder URLs.
 % Build: latexmk -pdf cv-example.tex
-% Use [letterpaper] for US Letter; A4 is the default.
+% A4 is the default. Use \geometry{letterpaper} in the preamble for US Letter.
 \documentclass{cv}
 
 % APPEARANCE
@@ -10,6 +10,7 @@
 % body-size also controls heading, subentry, date, location, contact, bio and footer sizes
 % unless those sizes are explicitly set below. Line spacing is 1.2 x size.
 \cvsetup{
+    layout        = timeline, % Change to compact for full-width body text.
     font          = computer-modern,
     body-size     = 10pt,
     name-size     = 17.28pt,
@@ -17,7 +18,7 @@
     link-color    = blue,
     location-color = black!55
 }
-% Further optional settings (shown with their defaults):
+% Further optional settings (timeline defaults shown; see README for compact):
 % \cvsetup{
 %     heading-size       = 10pt,
 %     subentry-size      = 10pt,
@@ -27,7 +28,9 @@
 %     bio-size           = 10pt,
 %     footer-size        = 10pt,
 %     location-icon-size = 7pt,
+%     bullet-size        = 5.5pt,
 %     contact-icon-color = black!40,
+%     document-title     = {Alex Example -- CV},
 %     organisation-first = true,
 %     show-dates         = true,
 %     show-location-icons = true,
@@ -46,13 +49,16 @@
 %     row-inset          = 6pt,
 %     date-width         = auto
 % }
-% date-width=auto measures a date range in the selected date font.
+% In timeline mode, date-width=auto measures a range in the selected date font.
 % For longer date labels, supply a width such as date-width=3cm.
-% show-dates=false removes the entire date column and reclaims its width.
+% show-dates=false hides dates in either layout; timeline also reclaims the column.
 % One entry without dates still aligns with the other entries.
 % Colours accept any xcolor expression, e.g. blue!70!black.
 % The centred footer reads "page 1 of 1" (also shown on one-page CVs).
 % latexmk resolves the total automatically; with pdflatex, compile twice.
+
+% Optional paper-size override (outside \cvsetup):
+% \geometry{letterpaper}
 
 % HEADER
 % Every field is optional, including name. Omit fields or set them to {}.
@@ -80,7 +86,8 @@
 %     linkedin-label = {LinkedIn},
 %     google-scholar-label = {Google Scholar}
 % }
-% For example, website-label={Portfolio} changes only the visible link text.
+% Examples: email-label={alex@example.com}, linkedin-label={in/your-name/},
+% website-label={Portfolio}. Labels change displayed text, not link destinations.
 % The optional bio is left-aligned below the contacts and has no section title.
 
 \begin{document}
@@ -100,7 +107,7 @@
 \begin{cventry}[
     organisation = {Example Research},
     role         = {Research Engineer},
-    dates        = {09/2024--present},
+    dates        = {09/2024--Present},
     location     = {Zürich, Switzerland},
     url          = {https://example.com}
 ]
@@ -135,7 +142,8 @@
     \cvdetail{Thesis: \cvlink{https://example.com/thesis}{\textit{Learning to Retrieve Evidence from Technical Documents}}}
     \cvdetail{Supervisor: Prof. Jordan Example (Information Retrieval Group)}
     % Subentries take the same five fields, but have no body.
-    % Titles indent under the degree; their dates stay in the main date column.
+    % Titles indent under the degree. Dates use the main date column in timeline
+    % mode, or align to the right in compact mode.
     \cvsubentry[
         organisation = {Partner University},
         role         = {Exchange Semester},
@@ -164,7 +172,7 @@
 % Organisation-only entry: bold project name, with no stray middle dot.
 \begin{cventry}[
     organisation = {Open Search Toolkit},
-    dates        = {2024--present},
+    dates        = {2024--Present},
     url          = {https://example.com/toolkit}
 ]
     \begin{cvbullets}
@@ -193,7 +201,7 @@
 % Remove this entire section if these details are better shown in your entries.
 \cvsection{Skills \& Languages}
 \begin{cventry}
-    \cvdetail{\textbf{Technical:} Python, SQL, PyTorch, Git, Linux}
+    \cvdetail{\textbf{Technical:} Python \cvseparator{} SQL \cvseparator{} PyTorch \cvseparator{} Git \cvseparator{} Linux}
     \cvdetail{\textbf{Languages:} English (fluent); German (native); French (conversational)}
 \end{cventry}
 
@@ -201,7 +209,10 @@
 % Role before organisation: organisation-first=false (organisation stays bold).
 % No date column: show-dates=false. No icons: show-contact-icons=false,
 % show-location-icons=false. No footer: show-page-numbers=false.
-% Compact style: body-size=9pt, heading-gap=3pt, bullet-gap=1pt, entry-gap=5pt.
+% Compact layout: layout=compact. Timeline (default): layout=timeline.
+% Compact uses organisation/dates, then role/location, with full-width body text.
+% Custom spacing overrides either layout: heading-gap=3pt, bullet-gap=1pt.
+% Omit gap keys to use automatic spacing for the selected layout.
 % Sans-serif style: font=helvetica. Muted links: link-color=blue!50!black.
 %
 % Longer CVs flow onto additional pages automatically, with page X of Y footers.

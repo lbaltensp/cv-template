@@ -45,3 +45,9 @@
 ._*
 Thumbs.db
 Desktop.ini
+
+*.synctex
+
+__pycache__/
+
+*.pyc
